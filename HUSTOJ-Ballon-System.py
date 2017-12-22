@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+# @author EndangeredFish    LucienShui    hamburger
 import requests
 import re
 import queue
@@ -39,52 +40,20 @@ def getstatus(cookies_):
 
 def appear(tmp, list) :
     for each in list :
-        if each == tmp : return True
+        if each['user'] == tmp['user'] and each['problem'] == tmp['problem'] : return True
     return False
-
-
-# def notRepeat(lists, notRepeatList):
-#     # seen = set()
-#     # for d in lists:
-#     #     t = tuple(d.items())
-#     #     if t not in seen:
-#     #         seen.add(t)
-#     #         notRepeatList.append(d)
-#     ret = []
-#     for node in lists :
-#         if not appear(node, ret): ret.append(node)
-#     # pp(ret)
-#     for tmp in notRepeatList :
-#         if not appear(tmp, ret): ret.append(tmp)
-#     notRepeatList = ret
-#     return notRepeatList
-
-
-# def showList(Ballon_list):
-#     cnt = 0
-#     for tmp in reversed(Ballon_list):
-#         print(tmp)
-#         cnt = cnt + 1
-#         if cnt == 10: break
 
 def showList(Ballon_list, vis):
     cnt = 0
     for tmp in Ballon_list:
+        flag = True
         for each in vis :
             if tmp['ballon_id'] == each :
-                continue
-        print(tmp)
-        cnt = cnt + 1
+                flag = False
+        if flag :
+            print(tmp)
+            cnt = cnt + 1
         if cnt == 10: break
-
-# def ballon(list) :
-#     ret = []
-#     cnt = 1
-#     for each in reversed(list) :
-#         ret.append({'ballon_id' : cnt, 'user' : each['user'], 'problem' : each['problem']})
-#         cnt = cnt + 1
-#     return ret
-
 
 class mainThread(threading.Thread):
     def __init__(self, work_queue):
@@ -95,34 +64,27 @@ class mainThread(threading.Thread):
     def run(self):
         # 最新runID
         currentRunID = 0
-        # 无重复结果表
-        # notRepeatList = []
         cookies = login()
         Ballon_number = 1
+        rawlist = []
         while True:
             # 未处理用户列表
-            rawlist = []
             html = getstatus(cookies)
             rawresult = re.findall(pattern, html, re.S)  # list
 
             for each in reversed(rawresult):
-                tmp = {'ballon_id': Ballon_number, 'user': each[2], 'question': each[4]}
-                if eval(each[1]) > currentRunID and not appear(tmp, rawlist):
-                    rawlist.append(tmp)
-                    Ballon_number = Ballon_number + 1
+                tmp = {'ballon_id': Ballon_number, 'user': each[2], 'problem': each[4]}
+                if eval(each[1]) > currentRunID :
+                    if not appear(tmp, rawlist) :
+                        rawlist.append(tmp)
+                        Ballon_number = Ballon_number + 1
             currentRunID = eval(rawresult[0][1])
-
-            # notRepeatList = notRepeat(rawlist, notRepeatList)
-
-            # pp(rawresult)
             # pp(rawlist)
+
             while not self.work_queue.empty():
                 self.work_queue.get()
-            # self.work_queue.put(notRepeatList) # 多线程通信
-            self.work_queue.put(rawlist)
-            # print("-----")
-            # pp(notRepeatList)
-            time.sleep(5)
+            self.work_queue.put(rawlist) # 多线程通信
+            time.sleep(1)
 
 
 class watchdogThread(threading.Thread):
@@ -132,36 +94,31 @@ class watchdogThread(threading.Thread):
 
     def run(self):
         Ballon_list = self.work_queue.get()
-        # pp(Ballon_list)
-        # print("================")
         alreadySend = []
         vis = []
         showList(Ballon_list, vis)
         while True:
             try:
                 index = eval(input())
-                # print(index)
-                # if index ==  : continue
                 if index > 0:
                     cnt = 0
                     for tmp in Ballon_list:
                         if index == tmp['ballon_id']:
                             vis.append(index)
                             alreadySend.append(Ballon_list[cnt])
-                            del Ballon_list[cnt]
                             break
                         cnt = cnt + 1
-                    # Ballon_list = self.work_queue.get()
+                    Ballon_list = self.work_queue.get()
+                    showList(Ballon_list, vis)
+                elif index == 0 :
+                    Ballon_list = self.work_queue.get()
                     showList(Ballon_list, vis)
                 else:
                     for tmp in reversed(alreadySend): print(tmp)
             except:
-                # Ballon_list = self.work_queue.get()
+                Ballon_list = self.work_queue.get()
                 showList(Ballon_list,vis)
                 print("No!")
-        # while True:
-        #     message = self.work_queue.get()
-        #     print("================")
 
 
 
@@ -179,7 +136,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# print(currentRunID)
-#
-# for each in rawresult:
-#     pp(each)
