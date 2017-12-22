@@ -51,7 +51,8 @@ def showList(Ballon_list, vis):
             if tmp['ballon_id'] == each :
                 flag = False
         if flag :
-            print(tmp)
+            # print(tmp)
+            print(str(tmp['ballon_id']) + ' ' + ' ' + str(tmp['problem']) + ' ' + str(tmp['user']))
             cnt = cnt + 1
         if cnt == 10: break
 
