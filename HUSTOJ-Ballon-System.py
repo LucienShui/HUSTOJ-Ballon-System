@@ -1,27 +1,37 @@
-#-*- coding:utf-8 -*-
 # @author EndangeredFish    LucienShui    hamburger
+# -*- coding:utf-8 -*-
 import requests
 import re
 import queue
 import threading
 import time
 from pprint import pprint as pp
-#登陆地址
-urllogin = 'http://acm.upc.edu.cn/oj/login.php'
-#榜单地址
-urlstatus = "http://acm.upc.edu.cn/oj/status.php?problem_id=&user_id=&cid=1001&language=-1&jresult=4"
-#登录信息
-data={"user_id":"team01","password":"91E73BEFD7"}
+
+# 以下可修改
+
+## HUSTOJ地址
+web = "http://acm.upc.edu.cn/oj/"
+## 比赛ID
+contestid = "1001"
+## 账号
+uid = "team01"
+## 密码
+upswd = "91E73BEFD7"
+## 正则表达式模式串
+# pattern = "<tr class='(even|odd)row'><td>([0-9]+)</td><td><a href='userinfo\.php\?user=([a-zA-Z0-9_]+)'>([a-zA-Z0-9_]+)</a></td><td><div class=center><a href='problem\.php\?id=(\d+)'>(\d+)</a></div></td><td><span class='btn btn-success'>(\*?)正确</span>"
+pattern = "<tr class='(evenrow|oddrow)'><td>(\d+)</td><td><a href='contestrank\.php\?cid=1001&user_id=([a-zA-Z0-9_]+)#([a-zA-Z0-9_]+)'>([a-zA-Z0-9_]+)</a></td><td><div class=center><a href='problem\.php\?cid=1001&pid=(\d)'>([A-Za-z])</div></a></td><td><span class='hidden' style='display:none' result='4' ></span><span class='btn btn-success'  title='答案正确，请再接再厉。'>(\*?)正确"
+
+
+urllogin = web + "login.php" # 登陆地址
+urlstatus = web + "status.php?problem_id=&user_id=&cid=" + contestid + "&language=-1&jresult=4" # 榜单地址
+data={"user_id": uid,"password":upswd} # 登录信息
 
 headers = { "Accept":"text/html,application/xhtml+xml,application/xml;",
             "Accept-Encoding":"gzip",
             "Accept-Language":"zh-CN,zh;q=0.8",
-            "Referer":"http://acm.upc.edu.cn/oj/",
+            "Referer":web,
             "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36"
             }
-#正则表达式模式串
-# pattern = "<tr class='(even|odd)row'><td>([0-9]+)</td><td><a href='userinfo\.php\?user=([a-zA-Z0-9_]+)'>([a-zA-Z0-9_]+)</a></td><td><div class=center><a href='problem\.php\?id=(\d+)'>(\d+)</a></div></td><td><span class='btn btn-success'>(\*?)正确</span>"
-pattern = "<tr class='(evenrow|oddrow)'><td>(\d+)</td><td><a href='contestrank\.php\?cid=1001&user_id=([a-zA-Z0-9_]+)#([a-zA-Z0-9_]+)'>([a-zA-Z0-9_]+)</a></td><td><div class=center><a href='problem\.php\?cid=1001&pid=(\d)'>([A-Za-z])</div></a></td><td><span class='hidden' style='display:none' result='4' ></span><span class='btn btn-success'  title='答案正确，请再接再厉。'>(\*?)正确"
 
 def producer(out_q,data):
     while True:
@@ -73,7 +83,6 @@ class mainThread(threading.Thread):
             for each in reversed(rawresult):
                 tmp = {'ballon_id': Ballon_number, 'user': each[2], 'problem': each[6]}
                 if eval(each[1]) > currentRunID :
-                    # print(each)
                     if not appear(tmp, rawlist) :
                         rawlist.append(tmp)
                         Ballon_number = Ballon_number + 1
