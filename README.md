@@ -18,6 +18,14 @@
 
 ---
 
+## 0.0.8 beta
+
+修复:
+
+&emsp;&emsp;修复了`acm.upc.edu.cn`网站上匹配比赛ID时的bug
+
+---
+
 ## 0.0.7 beta
 
 功能更新:
