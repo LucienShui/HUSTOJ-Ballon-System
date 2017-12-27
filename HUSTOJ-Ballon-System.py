@@ -10,7 +10,7 @@ from pprint import pprint as pp
 # 以下可修改
 
 ## HUSTOJ地址
-web = "http://acm.upc.edu.cn/oj/"
+web = ""
 
 ## 比赛ID
 contestid = ""
@@ -25,9 +25,11 @@ upswd = ""
 preid = ""
 
 ## 正则表达式模式串
+# 适用于 exam.upc.edu.cn
 # pattern = "<tr class='(even|odd)row'><td>([0-9]+)</td><td><a href='userinfo\.php\?user=([a-zA-Z0-9_]+)'>([a-zA-Z0-9_]+)</a></td><td><div class=center><a href='problem\.php\?id=(\d+)'>(\d+)</a></div></td><td><span class='btn btn-success'>(\*?)正确</span>"
 userpattern = "(" + preid + "[a-zA-Z0-9_]+)"
-pattern = "<tr class='(evenrow|oddrow)'><td>(\d+)</td><td><a href='contestrank\.php\?cid=1001&user_id=" + userpattern + "#" + userpattern+ "'>" + userpattern + "</a></td><td><div class=center><a href='problem\.php\?cid=1001&pid=(\d)'>([A-Za-z])</div></a></td><td><span class='hidden' style='display:none' result='4' ></span><span class='btn btn-success'  title='答案正确，请再接再厉。'>(\*?)正确"
+# 适用于 acm.upc.edu.cn/oj
+pattern = "<tr class='(evenrow|oddrow)'><td>(\d+)</td><td><a href='contestrank\.php\?cid=" + contestid + "&user_id=" + userpattern + "#" + userpattern+ "'>" + userpattern + "</a></td><td><div class=center><a href='problem\.php\?cid=" + contestid + "&pid=(\d)'>([A-Za-z])</div></a></td><td><span class='hidden' style='display:none' result='4' ></span><span class='btn btn-success'  title='答案正确，请再接再厉。'>(\*?)正确"
 
 urllogin = web + "login.php"  # 登陆地址
 urlstatus = web + "status.php?problem_id=&user_id=&cid=" + contestid + "&language=-1&jresult=4"  # 榜单地址
