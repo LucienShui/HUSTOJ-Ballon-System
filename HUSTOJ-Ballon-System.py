@@ -1,5 +1,4 @@
-# @author EndangeredFish    LucienShui    hamburger
-# -*- coding:utf-8 -*-
+# @author        EndangeredFish        LucienShui        hamburger
 import requests
 import re
 import queue
