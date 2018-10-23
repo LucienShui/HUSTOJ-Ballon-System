@@ -39,3 +39,7 @@
 功能更新:
 
 &emsp;&emsp;当有新的需要送的气球产生的时候会给出 "New status!!!" 提醒。
+
+# 特别鸣谢
+
+[EndangeredF1sh](https://github.com/EndangeredF1sh)
